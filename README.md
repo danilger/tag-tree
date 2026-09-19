@@ -25,6 +25,8 @@ ships empty so each project starts clean.
 
 <img width="2560" height="1440" alt="image" src="https://github.com/user-attachments/assets/fde2f6f8-1123-4d39-8c68-5ff5b00e88c5" />
 
+<img width="2560" height="1271" alt="image" src="https://github.com/user-attachments/assets/c09c06a9-f75c-4ff9-8f27-b320c333f2f0" />
+
 
 ## Setup
 

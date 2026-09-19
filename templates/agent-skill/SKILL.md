@@ -62,17 +62,20 @@ https://github.com/danilger/tag-tree
   label; path still shown underneath), `description` (hover tooltip under Title
   only), `ai_subtree_nodes` (string[] of paths for the dashed AI subtree button —
   curated logical deps when barrels hide edges). Does not create new graph nodes.
-- **Prefer the Cursor command** `/tag-tree-ai-subtree [path]` (installed by
-  `tag_tree init --agent cursor`) to populate `ai_subtree_nodes`. For JS/TS
+- **Prefer** `/tag-tree-ai-subtree [path]` (Cursor command or Pi prompt; installed by
+  `tag_tree init --agent cursor|pi|both`) to populate `ai_subtree_nodes`. For JS/TS
   entries (`.ts` / `.tsx` / `.js` / `.jsx` / …) the command runs the shipped
   collector (see below), writes `config.json`, and tells the user to Reload.
   Use free-form skill help only for setup / explanation; for “fill AI subtree
   for this file”, run or follow that command.
-- Install skill (+ Cursor commands) into a project:
+- Install skill + workflow slash commands into a project:
   ```bash
   cd .tag_tree && npm run init -- --agent cursor   # or pi | both
   # or: node bin/tag-tree.mjs init --agent both
   ```
+  Cursor → `.cursor/skills/` + `.cursor/commands/`. Pi → `.pi/skills/` +
+  `.pi/prompts/` (trust the project in Pi so prompts load). Same `/tag-tree-*`
+  names; Pi also exposes `/skill:tag-tree` when skill commands are enabled.
 
 ## AI subtree collector
 
@@ -198,7 +201,8 @@ http://localhost:5174/?file=shared%2Fauth%2Fstore.ts&line=42&split=1&focus=share
 http://localhost:5174/?change=limit-applicant-new-request&review=1&mode=changed
 ```
 
-Refresh installed skills after this template changes: `npm run init -- --agent cursor --force` (or `both`).
+Refresh installed skills/commands after this template changes:
+`npm run init -- --agent both --force` (or `cursor` / `pi`).
 
 ## Do not commit inside `.tag_tree`
 

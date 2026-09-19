@@ -1,8 +1,25 @@
 # tag-tree
 
-Portable file-dependency graph with `// tag:*` filters, rendered in [React Flow](https://reactflow.dev/). Click a node to preview the file in a Monaco modal (VS Code–style highlighting). Use **Split** next to **Zoom** for a side-by-side layout (file left, graph right; drag the divider to resize).
+**tag-tree** helps you **review agent-written code** and **understand the features
+agents build** — on a dependency graph of your project, not in a wall of diffs.
 
-Clone this folder into any project as `.tag_tree` and run it against that project's sources. It does **not** depend on skott or the host app's build.
+Agents export dirty changes into yellow **change sets** (`/tag-tree-explain`):
+hatching on touched files, a Review guide (`Shift+R`) with a recommended reading
+order, and file/line comments next to Monaco Diff. For “how does this feature
+work?” they author pale-blue **AI notes** (`/tag-tree-note`): a viewing map of
+participating nodes, narrative comments, and walkthroughs without requiring a
+diff. Tags, isolate/highlight modes, and deep links keep large codebases
+scannable while you review.
+
+Under the hood it is a portable file-dependency graph with `// tag:*` filters,
+rendered in [React Flow](https://reactflow.dev/). Click a node to preview the
+file in Monaco (VS Code–style highlighting). Use **Split** next to **Zoom** for
+a side-by-side layout (file left, graph right; drag the divider to resize).
+
+Clone this folder into any project as `.tag_tree` and run it against that
+project’s sources. It does **not** depend on skott or the host app’s build.
+`changes/` and `notes/` stay local (only READMEs are tracked); `config.json`
+ships empty so each project starts clean.
 
 ## Setup
 
@@ -13,8 +30,8 @@ npm install
 
 ## Agent skills and commands
 
-Install a project skill (and Cursor slash commands when using Cursor) so agents
-know how to wire tag-tree into the parent app:
+Install a project skill and workflow slash commands so agents know how to wire
+tag-tree into the parent app:
 
 ```bash
 # from parent project or from .tag_tree/
@@ -28,19 +45,20 @@ npm run init -- --agent both --force
 | Flag | Meaning |
 | --- | --- |
 | `--agent` | `cursor`, `pi`, or `both` (prompt if omitted) |
-| `--force` | overwrite existing skill / command files |
+| `--force` | overwrite existing skill / command / prompt files |
 | `--cwd` | parent project root (auto-detected if omitted) |
 
 Writes:
 
 - Cursor skill → `.cursor/skills/tag-tree/SKILL.md`
-- Cursor commands → `.cursor/commands/tag-tree-ai-subtree.md` (`/tag-tree-ai-subtree`), `.cursor/commands/tag-tree-explain.md` (`/tag-tree-explain`)
-- pi skill → `.pi/skills/tag-tree/SKILL.md`
+- Cursor commands → `.cursor/commands/tag-tree-*.md` (`/tag-tree-ai-subtree`, `/tag-tree-explain`, `/tag-tree-note`)
+- pi skill → `.pi/skills/tag-tree/SKILL.md` (also `/skill:tag-tree` when skill commands are enabled)
+- pi prompt templates → `.pi/prompts/tag-tree-*.md` (same three `/tag-tree-*` names; project must be **trusted** in Pi)
 
 ### `/tag-tree-ai-subtree`
 
-Cursor slash command (installed with `--agent cursor` or `both`). Use it to fill
-`config.nodes[].ai_subtree_nodes` for one root file:
+Slash command / Pi prompt (installed with `--agent cursor`, `pi`, or `both`). Use
+it to fill `config.nodes[].ai_subtree_nodes` for one root file:
 
 ```text
 /tag-tree-ai-subtree pages/foo/ui/FooPage.tsx
@@ -71,7 +89,7 @@ filters to known node ids.
 
 ### `/tag-tree-explain`
 
-Cursor slash command that explains **dirty** changes (vs `HEAD`) on the graph:
+Slash command / Pi prompt that explains **dirty** changes (vs `HEAD`) on the graph:
 
 ```text
 /tag-tree-explain
@@ -86,7 +104,7 @@ updating templates so the parent project gets the new command file.
 
 ### `/tag-tree-note`
 
-Cursor slash command that authors an **AI notes** walkthrough (pale blue; not a
+Slash command / Pi prompt that authors an **AI notes** walkthrough (pale blue; not a
 change set):
 
 ```text

@@ -27,7 +27,12 @@ Agents may edit **only**:
 
 Agents must **not** author or rewrite `path`, `rows`, or `prev_row`. Re-run the export script when the working tree changes. Refresh `notes` line numbers when the current file shifts.
 
-**Preferred:** Cursor `/tag-tree-explain` [optional change-set name] — exports dirty vs `HEAD` with `--graph-only`, then fills `comment` / `notes` / `review` (language of the user’s latest message). Any agent may later refine those fields when the user asks. Reinstall via `tag_tree init --agent cursor --force` after updating `.tag_tree` so the command is available in the parent project.
+**Preferred:** `/tag-tree-explain` [optional change-set name] (Cursor command or
+Pi prompt) — exports dirty vs `HEAD` with `--graph-only`, then fills
+`comment` / `notes` / `review` (language of the user’s latest message). Any
+agent may later refine those fields when the user asks. Reinstall via
+`tag_tree init --agent both --force` (or `cursor` / `pi`) after updating
+`.tag_tree` so the workflows are available in the parent project.
 
 ## Schema
 

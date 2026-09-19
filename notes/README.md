@@ -6,7 +6,8 @@ reviews (yellow). Notes are pale-blue explain/walkthrough guides.
 
 ## Preferred: `/tag-tree-note`
 
-Cursor command (after `tag_tree init --agent cursor`):
+Slash command (Cursor) or prompt template (Pi) after
+`tag_tree init --agent cursor|pi|both`:
 
 ```text
 /tag-tree-note [optional-id] …

@@ -21,6 +21,11 @@ project’s sources. It does **not** depend on skott or the host app’s build.
 `changes/` and `notes/` stay local (only READMEs are tracked); `config.json`
 ships empty so each project starts clean.
 
+<img width="2560" height="1440" alt="image" src="https://github.com/user-attachments/assets/e791e0e0-ea0f-4f19-8c66-ba85346bd928" />
+
+<img width="2560" height="1440" alt="image" src="https://github.com/user-attachments/assets/fde2f6f8-1123-4d39-8c68-5ff5b00e88c5" />
+
+
 ## Setup
 
 ```bash

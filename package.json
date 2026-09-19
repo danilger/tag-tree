@@ -1,0 +1,35 @@
+{
+  "name": "tag-tree",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Portable file-dependency graph with // tag:* filters (React Flow)",
+  "bin": {
+    "tag-tree": "./bin/tag-tree.mjs",
+    "tag_tree": "./bin/tag-tree.mjs"
+  },
+  "scripts": {
+    "analyze": "node scripts/analyze.mjs",
+    "collect-ai-subtree": "node utils/collect-ai-subtree-nodes.mjs",
+    "export-change": "node scripts/export-change-from-git.mjs",
+    "start": "node scripts/dev.mjs",
+    "dev": "node scripts/dev.mjs",
+    "init": "node bin/tag-tree.mjs init"
+  },
+  "dependencies": {
+    "@dagrejs/dagre": "^1.1.4",
+    "@monaco-editor/react": "^4.7.0",
+    "@xyflow/react": "^12.6.0",
+    "monaco-editor": "^0.56.0",
+    "react": "^19.0.0",
+    "react-arborist": "^3.16.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "~5.9.3",
+    "vite": "^6.2.0"
+  }
+}

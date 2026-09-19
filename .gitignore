@@ -1,0 +1,12 @@
+node_modules
+dist
+.generated
+.codegraph
+*.local
+.DS_Store
+
+# Project-local agent payloads — keep README only in the clone
+/changes/*
+!/changes/README.md
+/notes/*
+!/notes/README.md

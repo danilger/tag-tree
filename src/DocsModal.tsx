@@ -325,6 +325,11 @@ export function DocsModal({ open, onClose }: DocsModalProps) {
                 <code>Z</code> — zoom; Split — file left + graph right
               </li>
               <li>
+                Header fold icons — fold / unfold one nesting level across the
+                file, or fold all (<code>Ctrl+K Ctrl+0</code>; also gutter
+                chevrons and Monaco fold shortcuts when the editor is focused)
+              </li>
+              <li>
                 Current only / Side-by-side — when a change diff is available,
                 toggle single pane (current file + line highlights) vs split
                 DiffEditor

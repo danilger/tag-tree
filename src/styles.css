@@ -1501,6 +1501,14 @@ body,
   flex: 0 0 auto;
 }
 
+.modal-actions .toolbar-btn-icon {
+  min-width: 2rem;
+  padding-inline: 0.45rem;
+  font-size: 1.05rem;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
 .modal-header .label-short {
   display: none;
 }

@@ -314,6 +314,7 @@ export function FileModal({
   const vscodeUri = file?.fileUri ? toVsCodeUri(file.fileUri) : null
   const monacoTheme = theme === 'dark' ? 'vs-dark' : 'vs'
   const editorHeight = isPanel || expanded ? '100%' : '70vh'
+  const foldControlsEnabled = Boolean(file && !loading && !error)
   const pathTitle = pathCopied
     ? 'Copied'
     : copyPath
@@ -420,6 +421,45 @@ export function FileModal({
             </span>
           </button>
         ) : null}
+        <button
+          type="button"
+          className="toolbar-btn toolbar-btn-icon"
+          disabled={!foldControlsEnabled}
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={() =>
+            void runEditorFoldCommand(editorRef.current, 'fold')
+          }
+          title="Fold one nesting level"
+          aria-label="Fold one nesting level"
+        >
+          <span aria-hidden>⊟</span>
+        </button>
+        <button
+          type="button"
+          className="toolbar-btn toolbar-btn-icon"
+          disabled={!foldControlsEnabled}
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={() =>
+            void runEditorFoldCommand(editorRef.current, 'unfold')
+          }
+          title="Unfold one nesting level"
+          aria-label="Unfold one nesting level"
+        >
+          <span aria-hidden>⊞</span>
+        </button>
+        <button
+          type="button"
+          className="toolbar-btn toolbar-btn-icon"
+          disabled={!foldControlsEnabled}
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={() =>
+            void runEditorFoldCommand(editorRef.current, 'foldAll')
+          }
+          title="Fold all (Ctrl+K Ctrl+0)"
+          aria-label="Fold all (Ctrl+K Ctrl+0)"
+        >
+          <span aria-hidden>≡</span>
+        </button>
         <button
           type="button"
           className="toolbar-btn"
@@ -609,6 +649,98 @@ export function FileModal({
 
 // HELPERS
 
+async function runEditorFoldCommand(
+  ed: MonacoEditor.IStandaloneCodeEditor | null,
+  command: 'fold' | 'unfold' | 'foldAll',
+) {
+  if (!ed || !ed.getModel()) return
+  ed.focus()
+
+  if (command === 'foldAll') {
+    await ed.getAction('editor.foldAll')?.run()
+    return
+  }
+
+  const controller = ed.getContribution(
+    'editor.contrib.folding',
+  ) as FoldingControllerApi | null
+  const modelPromise = controller?.getFoldingModel()
+  if (!modelPromise) return
+  const foldingModel = await modelPromise
+  if (!foldingModel) return
+
+  const { regions } = foldingModel
+  if (!regions || regions.length === 0) return
+
+  // Only regions not hidden under a collapsed parent are visible / actionable.
+  const visibleIndexes: number[] = []
+  for (let i = 0; i < regions.length; i++) {
+    if (!hasCollapsedAncestor(regions, i)) visibleIndexes.push(i)
+  }
+  if (visibleIndexes.length === 0) return
+
+  if (command === 'fold') {
+    let maxOpenLevel = 0
+    const openAtMax: number[] = []
+    for (const i of visibleIndexes) {
+      if (regions.isCollapsed(i)) continue
+      const level = nestingLevel(regions, i)
+      if (level > maxOpenLevel) {
+        maxOpenLevel = level
+        openAtMax.length = 0
+        openAtMax.push(i)
+      } else if (level === maxOpenLevel) {
+        openAtMax.push(i)
+      }
+    }
+    if (openAtMax.length === 0) return
+    foldingModel.toggleCollapseState(
+      openAtMax.map((i) => regions.toRegion(i)),
+    )
+    return
+  }
+
+  let maxCollapsedLevel = 0
+  const collapsedAtMax: number[] = []
+  for (const i of visibleIndexes) {
+    if (!regions.isCollapsed(i)) continue
+    const level = nestingLevel(regions, i)
+    if (level > maxCollapsedLevel) {
+      maxCollapsedLevel = level
+      collapsedAtMax.length = 0
+      collapsedAtMax.push(i)
+    } else if (level === maxCollapsedLevel) {
+      collapsedAtMax.push(i)
+    }
+  }
+  if (collapsedAtMax.length === 0) return
+  foldingModel.toggleCollapseState(
+    collapsedAtMax.map((i) => regions.toRegion(i)),
+  )
+}
+
+function hasCollapsedAncestor(
+  regions: FoldingRegionsApi,
+  index: number,
+): boolean {
+  let parent = regions.getParentIndex(index)
+  while (parent !== -1) {
+    if (regions.isCollapsed(parent)) return true
+    parent = regions.getParentIndex(parent)
+  }
+  return false
+}
+
+function nestingLevel(regions: FoldingRegionsApi, index: number): number {
+  let level = 1
+  let parent = regions.getParentIndex(index)
+  while (parent !== -1) {
+    level += 1
+    parent = regions.getParentIndex(parent)
+  }
+  return level
+}
+
 function countContentLines(text: string): number {
   if (!text) return 0
   const endsWithNewline = text.endsWith('\n')
@@ -660,4 +792,26 @@ function applyLineNoteZones(
       zoneIds.current.push(id)
     }
   })
+}
+
+// TYPES
+
+type FoldRegion = {
+  isCollapsed: boolean
+}
+
+type FoldingRegionsApi = {
+  length: number
+  isCollapsed: (index: number) => boolean
+  getParentIndex: (index: number) => number
+  toRegion: (index: number) => FoldRegion
+}
+
+type FoldingModelApi = {
+  regions: FoldingRegionsApi
+  toggleCollapseState: (regions: FoldRegion[]) => void
+}
+
+type FoldingControllerApi = {
+  getFoldingModel: () => Promise<FoldingModelApi | null> | null
 }
